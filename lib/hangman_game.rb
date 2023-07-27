@@ -1,0 +1,1 @@
+words = File.open()
