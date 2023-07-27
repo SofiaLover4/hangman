@@ -12,6 +12,13 @@ end
 class Hangman
   attr_accessor :word, :screen, :turns, :guesses, :guessed_letters
 
+  def create_screen
+    @screen = ''
+    word.length.times do
+      @screen += ' _ '
+    end
+  end
+
   def show_information
     puts screen
     puts "Your guessed letters are: #{guessed_letters}" if guessed_letters != ''
@@ -22,11 +29,8 @@ class Hangman
     # The default stats
     @word = random_word
     @turns = 0
-    @guessed_letters = 'a'
-    @screen = ''
-    word.length.times do
-      @screen += ' _ '
-    end
+    @guessed_letters = ''
+    create_screen
     show_information
   end
 end
