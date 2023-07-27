@@ -7,3 +7,14 @@ def random_word
   end
   possible_words.sample # This will return one word from the list of possible words
 end
+
+# Hangman game
+class Hangman
+  attr_reader :word
+
+  def initialize
+    @word = random_word
+  end
+end
+
+game = Hangman.new
