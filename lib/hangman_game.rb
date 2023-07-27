@@ -10,10 +10,24 @@ end
 
 # Hangman game
 class Hangman
-  attr_reader :word
+  attr_accessor :word, :screen, :turns, :guesses, :guessed_letters
+
+  def show_information
+    puts screen
+    puts "Your guessed letters are: #{guessed_letters}" if guessed_letters != ''
+    puts "You have #{6 - turns} incorrect guesses left"
+  end
 
   def initialize
+    # The default stats
     @word = random_word
+    @turns = 0
+    @guessed_letters = 'a'
+    @screen = ''
+    word.length.times do
+      @screen += ' _ '
+    end
+    show_information
   end
 end
 
