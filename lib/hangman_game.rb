@@ -26,6 +26,7 @@ end
 # Hangman game
 class Hangman
   attr_accessor :word, :screen, :turns, :guesses, :guessed_letters, :status
+  @@saved_games = []
 
   def create_screen
     @screen = ''
@@ -86,7 +87,45 @@ class Hangman
     else
       check_word(guess)
     end
+  end
 
+  def save_game
+
+    data = YAML.dump({ # The data that will go into the file
+      :word => @word,
+      :turns => @turns,
+      :guessed_letters => @guessed_letters
+    })
+
+    print 'What would you like to name this save? '
+    name = gets
+    @@saved_games.push(name.chomp)
+    File.open("#{name.chomp}.txt", 'w') do |file|
+      file.puts data
+    end
+  end
+
+  # Get the name of the file from the user
+  def find_game
+    loop do
+      puts 'Sorry, that\'s not a valid answer, try again'
+      puts 'Saved Games:'
+      puts @@saved_games
+      print 'What save would you like to load? '
+      name = gets
+      puts "\n"
+      return name if @@saved_games.include?(name.chomp)
+    end
+  end
+
+  def load_game
+    name = find_game
+    p name
+    game_data = YAML.load File.read("#{name.chomp}.txt")
+    @word = game_data[:word]
+    @turns = game_data[:turns]
+    @guessed_letters = game_data[:guessed_letters]
+    puts screen
   end
 end
 
@@ -99,3 +138,5 @@ def play_game
 end
 
 play_game
+
+
