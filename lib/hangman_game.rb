@@ -10,10 +10,10 @@ end
 
 def ask_guess
   guess = gets
-  guess = guess.chomp
+  guess = guess.chomp.downcase
 
   while guess.length != 1
-    print 'Sorry that guess wasn\' valid, try again: '
+    print 'Sorry that guess wasn\'t valid, try again: '
     guess = gets
     guess = guess.chomp
   end
@@ -43,17 +43,26 @@ class Hangman
     @word = random_word
     @turns = 0
     @guessed_letters = ''
+    @status = 'playing'
     create_screen
     show_information
+  end
+
+  def check_status
+    if @screen.split(" ").join() == @word
+      puts "Congratulations, the word was #{@word}! You win!"
+
+    elsif @turns == 6
+      puts "I'm sorry but you have run out of turns, the word was #{@word}"
+    end
   end
 
   def check_word
     old_screen = @screen.split(' ') # We are going to use to keep old letters
     @screen = '' # Here were are resetting the screen
-
     print 'type in your word here:' # Place holder
-
     guess = ask_guess
+    @guessed_letters += " #{guess} " unless @guessed_letters.include?(guess) # Stop repeated letters from showing up
 
     i = 0
     while i < word.length
@@ -61,10 +70,10 @@ class Hangman
       i += 1
     end
 
+    @turns += 1 unless word.include?(guess) || @guessed_letters.include?(guess) 
+    # Only add to the turn if the letter is not in the word or guessed already
     show_information
   end
 end
 
 game = Hangman.new
-game.check_word
-game.check_word
