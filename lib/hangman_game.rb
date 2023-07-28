@@ -23,7 +23,7 @@ end
 
 # Hangman game
 class Hangman
-  attr_accessor :word, :screen, :turns, :guesses, :guessed_letters
+  attr_accessor :word, :screen, :turns, :guesses, :guessed_letters, :status
 
   def create_screen
     @screen = ''
@@ -49,19 +49,21 @@ class Hangman
   end
 
   def check_status
-    if @screen.split(" ").join() == @word
+    if @screen.split('').join() == @word
       puts "Congratulations, the word was #{@word}! You win!"
-
+      @status = 'win'
     elsif @turns == 6
       puts "I'm sorry but you have run out of turns, the word was #{@word}"
+      @status = 'loss'
     end
   end
 
   def check_word
     old_screen = @screen.split(' ') # We are going to use to keep old letters
     @screen = '' # Here were are resetting the screen
-    print 'type in your word here:' # Place holder
+    print 'type in your letter here:' # Place holder
     guess = ask_guess
+    @turns += 1 unless word.include?(guess) || @guessed_letters.include?(guess) 
     @guessed_letters += " #{guess} " unless @guessed_letters.include?(guess) # Stop repeated letters from showing up
 
     i = 0
@@ -70,10 +72,18 @@ class Hangman
       i += 1
     end
 
-    @turns += 1 unless word.include?(guess) || @guessed_letters.include?(guess) 
+
     # Only add to the turn if the letter is not in the word or guessed already
     show_information
   end
 end
 
-game = Hangman.new
+def play_game 
+  game = Hangman.new
+  while game.status == 'playing'
+    game.check_word
+    game.check_status
+  end
+end
+
+play_game
