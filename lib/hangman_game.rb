@@ -63,6 +63,8 @@ class Hangman
     @screen = '' # Here were are resetting the screen
     print 'Type in your letter here:' # Place holder
     guess = ask_guess
+    puts ' '
+    # Only add to the turn if the letter is not in the word or guessed already
     @turns += 1 unless word.include?(guess) || @guessed_letters.include?(guess) 
     @guessed_letters += " #{guess} " unless @guessed_letters.include?(guess) # Stop repeated letters from showing up
 
@@ -72,13 +74,11 @@ class Hangman
       i += 1
     end
 
-
-    # Only add to the turn if the letter is not in the word or guessed already
     show_information
   end
 end
 
-def play_game 
+def play_game
   game = Hangman.new
   while game.status == 'playing'
     game.check_word
