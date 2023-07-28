@@ -26,6 +26,7 @@ end
 # Hangman game
 class Hangman
   attr_accessor :word, :screen, :turns, :guesses, :guessed_letters, :status
+
   @@saved_games = []
 
   def create_screen
@@ -49,9 +50,15 @@ class Hangman
     @status = 'playing'
     create_screen
     show_information
+
+    Dir.foreach('saves') do |entry|
+      next if entry == '.' || entry == '..'
+
+      @@saved_games.push(entry[0..(entry.length - 5)])
+    end
   end
 
-  def check_status
+  def check_win
     if @screen.split(' ').join('') == @word
       puts "Congratulations, the word was #{@word}! You win!"
       @status = 'win'
@@ -83,14 +90,14 @@ class Hangman
     puts ' '
     if guess == 'save'
       puts 'The game will be saved'
-      @status = 'save'
+      @status = 'saving'
+      save_game
     else
       check_word(guess)
     end
   end
 
   def save_game
-
     data = YAML.dump({ # The data that will go into the file
       :word => @word,
       :turns => @turns,
@@ -99,15 +106,13 @@ class Hangman
 
     print 'What would you like to name this save? '
     name = gets
-    @@saved_games.push(name.chomp)
-    File.open("#{name.chomp}.txt", 'w') do |file|
-      file.puts data
-    end
+    file_path = File.join('saves', "#{name.chomp}.txt")
+    File.open(file_path, 'w') { |file| file.puts data }
   end
 
   # Get the name of the file from the user
   def find_game
-    loop do
+    loop do # This loop will continue until a valid name is found
       puts 'Sorry, that\'s not a valid answer, try again'
       puts 'Saved Games:'
       puts @@saved_games
@@ -119,9 +124,9 @@ class Hangman
   end
 
   def load_game
+    @status = 'playing'
     name = find_game
-    p name
-    game_data = YAML.load File.read("#{name.chomp}.txt")
+    game_data = YAML.load File.read("saves/#{name.chomp}.txt")
     @word = game_data[:word]
     @turns = game_data[:turns]
     @guessed_letters = game_data[:guessed_letters]
@@ -131,12 +136,14 @@ end
 
 def play_game
   game = Hangman.new
+  game.load_game
   while game.status == 'playing'
     game.decide_action
-    game.check_status
+    game.check_win
   end
 end
 
 play_game
+
 
 
