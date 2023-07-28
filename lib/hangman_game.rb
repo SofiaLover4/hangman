@@ -35,7 +35,7 @@ class Hangman
   def show_information
     puts screen
     puts "Your guessed letters are: #{guessed_letters}" if guessed_letters != ''
-    puts "You have #{6 - turns} incorrect guesses left"
+    puts "You have #{7 - turns} incorrect guesses left"
   end
 
   def initialize
@@ -52,7 +52,7 @@ class Hangman
     if @screen.split('').join() == @word
       puts "Congratulations, the word was #{@word}! You win!"
       @status = 'win'
-    elsif @turns == 6
+    elsif @turns == 7
       puts "I'm sorry but you have run out of turns, the word was #{@word}"
       @status = 'loss'
     end
@@ -61,7 +61,7 @@ class Hangman
   def check_word
     old_screen = @screen.split(' ') # We are going to use to keep old letters
     @screen = '' # Here were are resetting the screen
-    print 'type in your letter here:' # Place holder
+    print 'Type in your letter here:' # Place holder
     guess = ask_guess
     @turns += 1 unless word.include?(guess) || @guessed_letters.include?(guess) 
     @guessed_letters += " #{guess} " unless @guessed_letters.include?(guess) # Stop repeated letters from showing up
