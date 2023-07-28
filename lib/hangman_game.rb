@@ -8,6 +8,19 @@ def random_word
   possible_words.sample # This will return one word from the list of possible words
 end
 
+def ask_guess
+  guess = gets
+  guess = guess.chomp
+
+  while guess.length != 1
+    print 'Sorry that guess wasn\' valid, try again: '
+    guess = gets
+    guess = guess.chomp
+  end
+
+  guess
+end
+
 # Hangman game
 class Hangman
   attr_accessor :word, :screen, :turns, :guesses, :guessed_letters
@@ -33,6 +46,25 @@ class Hangman
     create_screen
     show_information
   end
+
+  def check_word
+    old_screen = @screen.split(' ') # We are going to use to keep old letters
+    @screen = '' # Here were are resetting the screen
+
+    print 'type in your word here:' # Place holder
+
+    guess = ask_guess
+
+    i = 0
+    while i < word.length
+      @screen += word[i] == guess ? " #{guess} " : " #{old_screen[i]} "
+      i += 1
+    end
+
+    show_information
+  end
 end
 
 game = Hangman.new
+game.check_word
+game.check_word
