@@ -1,0 +1,6 @@
+---
+:word: clocks
+:turns: 7
+:guessed_letters: " g  e  a  p  u  x  h "
+:screen: " _  _  _  _  _  _ "
+:status: done

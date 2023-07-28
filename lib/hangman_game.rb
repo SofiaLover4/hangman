@@ -1,5 +1,15 @@
 require 'yaml'
 
+def introduction
+  puts 'Welcome to Hangman'
+  puts 'You will have to guess a word that is 5 to 12 characters long'
+  puts 'You have seven incorrect guesses but aftet that you lose'
+  puts 'Each game you play will be saved'
+  puts 'You can also save in the middle of a game by typing \'save\' instead of a guess'
+  puts 'Good luck!'
+  puts ''
+end
+
 def random_word
   words = File.readlines('alot_of_words.txt')
   possible_words = []
@@ -25,9 +35,11 @@ end
 
 # Hangman game
 class Hangman
-  attr_accessor :word, :screen, :turns, :guesses, :guessed_letters, :status
+  attr_accessor :word, :screen, :turns, :guesses, :guessed_letters, :status, :saved_games
 
-  @@saved_games = []
+  def self.saved_games
+    @saved_games
+  end
 
   def create_screen
     @screen = ''
@@ -48,13 +60,14 @@ class Hangman
     @turns = 0
     @guessed_letters = ''
     @status = 'playing'
-    create_screen
-    show_information
+    @saved_games = []
+    #create_screen 
+    #show_information
 
     Dir.foreach('saves') do |entry|
       next if entry == '.' || entry == '..'
 
-      @@saved_games.push(entry[0..(entry.length - 5)])
+      @saved_games.push(entry[0..(entry.length - 5)])
     end
   end
 
@@ -80,8 +93,6 @@ class Hangman
       @screen += word[i] == guess ? " #{guess} " : " #{old_screen[i]} "
       i += 1
     end
-
-    show_information
   end
 
   def decide_action
@@ -98,10 +109,13 @@ class Hangman
   end
 
   def save_game
+    puts @status
     data = YAML.dump({ # The data that will go into the file
       :word => @word,
       :turns => @turns,
-      :guessed_letters => @guessed_letters
+      :guessed_letters => @guessed_letters,
+      :screen => @screen,
+      :status => @status == 'saving' ? 'playing' : 'done' # If a game is finished it will show
     })
 
     print 'What would you like to name this save? '
@@ -113,37 +127,55 @@ class Hangman
   # Get the name of the file from the user
   def find_game
     loop do # This loop will continue until a valid name is found
-      puts 'Sorry, that\'s not a valid answer, try again'
       puts 'Saved Games:'
-      puts @@saved_games
+      puts @saved_games
       print 'What save would you like to load? '
       name = gets
       puts "\n"
-      return name if @@saved_games.include?(name.chomp)
+      return name if @saved_games.include?(name.chomp) || name.chomp == 'n'
     end
   end
 
   def load_game
-    @status = 'playing'
     name = find_game
+    return if name.chomp == 'n'
+
     game_data = YAML.load File.read("saves/#{name.chomp}.txt")
     @word = game_data[:word]
     @turns = game_data[:turns]
     @guessed_letters = game_data[:guessed_letters]
-    puts screen
+    @screen = game_data[:screen]
+    @status = game_data[:status]
+    # Only show the status if the same is already done else the loop will show the status
+    show_information if @status == 'done' 
   end
 end
 
 def play_game
   game = Hangman.new
-  game.load_game
+  game.load_game unless game.saved_games.empty? # only prompt to load a game when there are saves
   while game.status == 'playing'
+    game.show_information
     game.decide_action
     game.check_win
   end
+  # The game status will be saving if it was saved in the middle of the game
+  game.save_game unless game.status == 'done' || game.status == 'saving'
+
+  # Prompt to end the game
+  answer = ''
+  until answer == 'y' || answer == 'n'
+    print 'Would you like to continue? '
+    answer = gets
+    answer = answer.chomp
+  end
+
+  return if answer == 'n'
+
+  play_game
 end
 
+introduction
 play_game
-
 
 

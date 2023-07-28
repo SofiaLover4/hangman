@@ -1,0 +1,6 @@
+---
+:word: headset
+:turns: 2
+:guessed_letters: " g  e  r  s "
+:screen: " _  e  _  _  s  e  _ "
+:status: playing
