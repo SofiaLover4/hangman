@@ -1,3 +1,5 @@
+require 'yaml'
+
 def random_word
   words = File.readlines('alot_of_words.txt')
   possible_words = []
@@ -12,7 +14,7 @@ def ask_guess
   guess = gets
   guess = guess.chomp.downcase
 
-  while guess.length != 1
+  while guess != 'save' && guess.length != 1
     print 'Sorry that guess wasn\'t valid, try again: '
     guess = gets
     guess = guess.chomp
@@ -49,7 +51,7 @@ class Hangman
   end
 
   def check_status
-    if @screen.split('').join() == @word
+    if @screen.split(' ').join('') == @word
       puts "Congratulations, the word was #{@word}! You win!"
       @status = 'win'
     elsif @turns == 7
@@ -58,12 +60,9 @@ class Hangman
     end
   end
 
-  def check_word
+  def check_word(guess)
     old_screen = @screen.split(' ') # We are going to use to keep old letters
     @screen = '' # Here were are resetting the screen
-    print 'Type in your letter here:' # Place holder
-    guess = ask_guess
-    puts ' '
     # Only add to the turn if the letter is not in the word or guessed already
     @turns += 1 unless word.include?(guess) || @guessed_letters.include?(guess) 
     @guessed_letters += " #{guess} " unless @guessed_letters.include?(guess) # Stop repeated letters from showing up
@@ -76,12 +75,25 @@ class Hangman
 
     show_information
   end
+
+  def decide_action
+    print 'Type in your letter here:' # Place holder
+    guess = ask_guess
+    puts ' '
+    if guess == 'save'
+      puts 'The game will be saved'
+      @status = 'save'
+    else
+      check_word(guess)
+    end
+
+  end
 end
 
 def play_game
   game = Hangman.new
   while game.status == 'playing'
-    game.check_word
+    game.decide_action
     game.check_status
   end
 end
