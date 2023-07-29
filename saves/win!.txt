@@ -1,0 +1,6 @@
+---
+:word: translation
+:turns: 2
+:guessed_letters: " r  p  e  a  n  t  s  l  i  o "
+:screen: " t  r  a  n  s  l  a  t  i  o  n "
+:status: done

@@ -13,6 +13,7 @@ end
 def random_word
   words = File.readlines('alot_of_words.txt')
   possible_words = []
+  # Create a list of possible words to use in the game
   words.each do |word|
     word = word.chomp
     possible_words.push(word) if word.length >= 5 && word.length <= 12 # Criteria
@@ -24,6 +25,7 @@ def ask_guess
   guess = gets
   guess = guess.chomp.downcase
 
+  # Save is going to be used to for saving the game later on 
   while guess != 'save' && guess.length != 1
     print 'Sorry that guess wasn\'t valid, try again: '
     guess = gets
@@ -36,10 +38,6 @@ end
 # Hangman game
 class Hangman
   attr_accessor :word, :screen, :turns, :guesses, :guessed_letters, :status, :saved_games
-
-  def self.saved_games
-    @saved_games
-  end
 
   def create_screen
     @screen = ''
@@ -61,8 +59,7 @@ class Hangman
     @guessed_letters = ''
     @status = 'playing'
     @saved_games = []
-    #create_screen 
-    #show_information
+    create_screen
 
     Dir.foreach('saves') do |entry|
       next if entry == '.' || entry == '..'
@@ -70,12 +67,14 @@ class Hangman
       @saved_games.push(entry[0..(entry.length - 5)])
     end
   end
-
+  # This will be at the end of check_word
   def check_win
     if @screen.split(' ').join('') == @word
+      show_information
       puts "Congratulations, the word was #{@word}! You win!"
       @status = 'win'
     elsif @turns == 7
+      show_information
       puts "I'm sorry but you have run out of turns, the word was #{@word}"
       @status = 'loss'
     end
@@ -96,9 +95,11 @@ class Hangman
   end
 
   def decide_action
-    print 'Type in your letter here:' # Place holder
+    print 'Type in your letter here:'
     guess = ask_guess
     puts ' '
+
+    # If the user types in save it will save the game for them but for anything else it will check the guess
     if guess == 'save'
       puts 'The game will be saved'
       @status = 'saving'
@@ -109,7 +110,6 @@ class Hangman
   end
 
   def save_game
-    puts @status
     data = YAML.dump({ # The data that will go into the file
       :word => @word,
       :turns => @turns,
@@ -129,7 +129,7 @@ class Hangman
     loop do # This loop will continue until a valid name is found
       puts 'Saved Games:'
       puts @saved_games
-      print 'What save would you like to load? '
+      print 'What save would you like to load? (Put \'n\' if none)'
       name = gets
       puts "\n"
       return name if @saved_games.include?(name.chomp) || name.chomp == 'n'
@@ -140,6 +140,7 @@ class Hangman
     name = find_game
     return if name.chomp == 'n'
 
+    # Serialization of file into game data
     game_data = YAML.load File.read("saves/#{name.chomp}.txt")
     @word = game_data[:word]
     @turns = game_data[:turns]
@@ -154,6 +155,8 @@ end
 def play_game
   game = Hangman.new
   game.load_game unless game.saved_games.empty? # only prompt to load a game when there are saves
+
+  # For games that are still playing any game that are lost or won will be skipped if they are loaded back in
   while game.status == 'playing'
     game.show_information
     game.decide_action
@@ -177,5 +180,3 @@ end
 
 introduction
 play_game
-
-

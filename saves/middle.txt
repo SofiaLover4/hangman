@@ -1,6 +1,6 @@
 ---
-:word: headset
-:turns: 2
-:guessed_letters: " g  e  r  s "
-:screen: " _  e  _  _  s  e  _ "
+:word: madrid
+:turns: 4
+:guessed_letters: " p  e  a  u  l "
+:screen: " _  a  _  _  _  _ "
 :status: playing

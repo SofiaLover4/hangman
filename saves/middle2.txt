@@ -1,0 +1,6 @@
+---
+:word: sustained
+:turns: 2
+:guessed_letters: " p  e  r  n  a  u "
+:screen: " _  u  _  _  a  _  n  e  _ "
+:status: playing

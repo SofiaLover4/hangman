@@ -1,6 +1,6 @@
 ---
-:word: clocks
+:word: intention
 :turns: 7
-:guessed_letters: " g  e  a  p  u  x  h "
-:screen: " _  _  _  _  _  _ "
+:guessed_letters: " e  p  r  n  s  l  m  u  b "
+:screen: " _  n  _  e  n  _  _  _  n "
 :status: done
